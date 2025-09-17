@@ -1,10 +1,10 @@
-name: Deploy (dev)
+name: Deploy
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - "dev"
+      - "main"
 
 jobs:
   build:
