@@ -13,7 +13,7 @@ runs:
         script: |
           set -e
 
-          ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial | tr -d '"')
+          ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial | tr -d '"')
           echo "Caddy is currently routing to: $ACTIVE"
 
           # DEPLOY TO GREEN
@@ -50,7 +50,7 @@ runs:
             curl -X POST \
               -H "Content-Type: application/json" \
               -d '"192.168.1.180:${{ inputs.container-port }}"' \
-              http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial
+              http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial
             
             echo "Stopping old blue container"
             docker rm -f super-app-blue || true
@@ -91,7 +91,7 @@ runs:
             curl -X POST \
               -H "Content-Type: application/json" \
               -d '"192.168.1.180:${{ inputs.container-port }}"' \
-              http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial
+              http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial
 
             echo "Stopping old green container"
             docker rm -f super-app-green || true
