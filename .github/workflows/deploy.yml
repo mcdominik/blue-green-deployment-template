@@ -16,7 +16,7 @@ jobs:
       - name: Build and push Docker image
         uses: "./.github/templates/build-and-push"
         with:
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ vars.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           image-name: mcdominik/super-app
 
@@ -59,8 +59,8 @@ jobs:
         uses: "./.github/templates/deploy"
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
+          username: ${{ vars.USERNAME }}
+          port: ${{ vars.PORT }}
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           application-port: 5000
           container-port: 4000
@@ -78,6 +78,6 @@ jobs:
         uses: "./.github/templates/clean"
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
+          username: ${{ vars.USERNAME }}
+          port: ${{ vars.PORT }}
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
