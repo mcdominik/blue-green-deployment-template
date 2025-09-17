@@ -1,0 +1,36 @@
+name: Clean
+description: 'Removes dangling Docker images and stopped containers on the VPS.'
+
+inputs:
+  # SSH
+  host:
+    required: true
+  username:
+    required: true
+  port:
+    required: true
+  ssh-private-key:
+    required: true
+
+  # Docker
+  image-name:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Clean docker inside VPS
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        port: ${{ inputs.port }}
+        key: ${{ inputs.ssh-private-key }}
+        script: |
+          echo "Pruning dangling Docker images..."
+          docker image prune -f
+          echo "Pruning stopped Docker containers..."
+          docker container prune -f
+          echo "Docker cleaning attempt finished."
+          echo "Clear cache..."
+          docker system prune -af

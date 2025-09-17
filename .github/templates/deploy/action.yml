@@ -1,0 +1,98 @@
+name: Deploy
+
+runs:
+  using: "composite"
+  steps:
+    - name: Blue-Green Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        port: ${{ inputs.port }}
+        key: ${{ inputs.ssh-private-key }}
+        script: |
+          set -e
+
+          ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial | tr -d '"')
+          echo "Caddy is currently routing to: $ACTIVE"
+
+          # DEPLOY TO GREEN
+          if [ "${{ inputs.container-port }}" -eq 5002 ]; then
+
+            echo "Deploying to GREEN on port ${{ inputs.container-port }}"
+
+            docker run -d \
+              -p ${{ inputs.container-port }}:${{ inputs.application-port }} \
+              --restart=always \
+              --name ${{ inputs.container-name }} \
+              ${{ inputs.image-name }}
+
+            # Health check
+            echo "Waiting for health check for ${{ inputs.container-name }}..."
+            for i in {1..15}; do
+              if curl -s --fail http://localhost:${{ inputs.application-port }}/monitoring/healthcheck > /dev/null; then
+                echo "Green health check passed!"
+                break
+              fi
+              echo "Health check attempt $i failed, retrying in 2 seconds..."
+              sleep 2
+            done
+
+            # Final check before switching traffic
+            if ! curl -s --fail http://localhost:${{ inputs.application-port }}/monitoring/healthcheck > /dev/null; then
+              echo "New container ${{ inputs.container-name }} failed health check!"
+              docker logs ${{ inputs.container-name }}
+              docker rm -f ${{ inputs.container-name }}
+              exit 1
+            fi
+
+            echo "Switching Caddy to new green on port: ${{ inputs.container-port }}"
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -d '"192.168.1.180:${{ inputs.container-port }}"' \
+              http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial
+            
+            echo "Stopping old blue container"
+            docker rm -f super-app-blue || true
+          fi
+
+          # DEPLOY TO BLUE
+          if [ "${{ inputs.container-port }}" -eq 4000 ]; then
+
+            echo "Deploying to BLUE on port ${{ inputs.container-port }}"
+
+            docker run -d \
+              -p ${{ inputs.container-port }}:${{ inputs.application-port }} \
+              --restart=always \
+              --name ${{ inputs.container-name }} \
+              ${{ inputs.image-name }}
+
+            # Health check
+            echo "Waiting for health check for ${{ inputs.container-name }}..."
+            for i in {1..15}; do
+              if curl -s --fail http://localhost:${{ inputs.container-port }}/monitoring/healthcheck > /dev/null; then
+                echo "New blue check passed!"
+                break
+              fi
+              echo "Health check attempt $i failed, retrying in 2 seconds..."
+              sleep 2
+            done
+            
+            # Final check before switching traffic
+            if ! curl -s --fail http://localhost:${{ inputs.container-port }}/monitoring/healthcheck > /dev/null; then
+              echo "New container ${{ inputs.container-name }} failed health check!"
+              docker logs ${{ inputs.container-name }}
+              docker rm -f ${{ inputs.container-name }}
+              exit 1
+            fi
+
+            # Update Caddy to point to the new blue container
+            echo "Switching Caddy to ${{ inputs.container-port }}"
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -d '"192.168.1.180:${{ inputs.container-port }}"' \
+              http://localhost:2019/config/apps/http/servers/srv0/routes/1/handle/0/routes/1/handle/0/upstreams/0/dial
+
+            echo "Stopping old green container"
+            docker rm -f super-app-green || true
+          fi
