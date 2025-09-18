@@ -20,6 +20,7 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           image-name: mcdominik/super-app
           context: ./example-app
+          file: ./example-app/Dockerfile
 
       - name: Pull new image on server
         uses: "./.github/templates/pull"
