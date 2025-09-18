@@ -1,5 +1,25 @@
 name: Deploy
 
+inputs:
+  # SSH
+  host:
+    required: true
+  username:
+    required: true
+  port:
+    required: true
+  ssh-private-key:
+    required: true
+
+  application-port:
+    required: true
+  container-port:
+    required: true
+  image-name:
+    required: true
+  container-name:
+    required: true
+
 runs:
   using: "composite"
   steps:
