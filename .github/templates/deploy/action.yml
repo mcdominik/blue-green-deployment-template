@@ -32,9 +32,7 @@ runs:
         key: ${{ inputs.ssh-private-key }}
         script: |
           set -e
-          echo "host is: ${{ inputs.host }}"
-          echo "username is: ${{ inputs.username }}"
-          echo "port is: ${{ inputs.port }}"
+
           ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial | tr -d '"')
           echo "Caddy is currently routing to: $ACTIVE"
 
@@ -52,7 +50,7 @@ runs:
             # Health check
             echo "Waiting for health check for ${{ inputs.container-name }}..."
             for i in {1..15}; do
-              if curl -s --fail http://localhost:${{ inputs.application-port }}/monitoring/healthcheck > /dev/null; then
+              if curl -s --fail http://localhost:${{ inputs.container-port }}/monitoring/healthcheck > /dev/null; then
                 echo "Green health check passed!"
                 break
               fi
@@ -61,7 +59,7 @@ runs:
             done
 
             # Final check before switching traffic
-            if ! curl -s --fail http://localhost:${{ inputs.application-port }}/monitoring/healthcheck > /dev/null; then
+            if ! curl -s --fail http://localhost:${{ inputs.container-port }}/monitoring/healthcheck > /dev/null; then
               echo "New container ${{ inputs.container-name }} failed health check!"
               docker logs ${{ inputs.container-name }}
               docker rm -f ${{ inputs.container-name }}
