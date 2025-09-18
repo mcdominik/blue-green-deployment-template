@@ -32,7 +32,9 @@ runs:
         key: ${{ inputs.ssh-private-key }}
         script: |
           set -e
-
+          echo "host is: ${{ inputs.host }}"
+          echo "username is: ${{ inputs.username }}"
+          echo "port is: ${{ inputs.port }}"
           ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial | tr -d '"')
           echo "Caddy is currently routing to: $ACTIVE"
 
