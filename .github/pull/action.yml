@@ -1,0 +1,30 @@
+name: Pull
+
+inputs:
+  # SSH
+  host:
+    required: true
+  username:
+    required: true
+  port:
+    required: true
+  ssh-private-key:
+    required: true
+
+  # Docker
+  image-name:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Pull new image on VPS
+      continue-on-error: true
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ inputs.host }}
+        USERNAME: ${{ inputs.username }}
+        PORT: ${{ inputs.port }}
+        KEY: ${{ inputs.ssh-private-key }}
+        script: |
+          docker pull ${{ inputs.image-name }}
