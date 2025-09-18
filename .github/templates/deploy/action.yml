@@ -69,7 +69,7 @@ runs:
             echo "Switching Caddy to new green on port: ${{ inputs.container-port }}"
             curl -X POST \
               -H "Content-Type: application/json" \
-              -d '"192.168.1.180:${{ inputs.container-port }}"' \
+              -d '"192.168.2.131:${{ inputs.container-port }}"' \
               http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial
             
             echo "Stopping old blue container"
@@ -110,7 +110,7 @@ runs:
             echo "Switching Caddy to ${{ inputs.container-port }}"
             curl -X POST \
               -H "Content-Type: application/json" \
-              -d '"192.168.1.180:${{ inputs.container-port }}"' \
+              -d '"192.168.2.131:${{ inputs.container-port }}"' \
               http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial
 
             echo "Stopping old green container"
