@@ -35,9 +35,9 @@ runs:
 
           ACTIVE=$(curl -s http://localhost:2019/config/apps/http/servers/srv0/routes/0/handle/0/upstreams/0/dial | tr -d '"')
           echo "Caddy is currently routing to: $ACTIVE"
-
+          echo "${{ inputs.container-port }}"
           # DEPLOY TO GREEN
-          if [ "${{ inputs.container-port }}" -eq 5002 ]; then
+          if [ "${{ inputs.container-port }}" -eq 4001 ]; then
 
             echo "Deploying to GREEN on port ${{ inputs.container-port }}"
 
