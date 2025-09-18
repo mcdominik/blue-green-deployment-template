@@ -25,7 +25,7 @@ runs:
         host: ${{ inputs.host }}
         username: ${{ inputs.username }}
         port: ${{ inputs.port }}
-        ssh-private-key: ${{ inputs.ssh-private-key }}
+        key: ${{ inputs.ssh-private-key }}
         script: |
           echo "Pruning dangling Docker images..."
           docker image prune -f
