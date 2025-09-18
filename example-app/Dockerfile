@@ -8,4 +8,5 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["fastapi", "run", "main.py", "--port", "5000"]
+CMD ["python", "main.py"]
+
