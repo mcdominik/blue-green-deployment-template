@@ -1,5 +1,5 @@
 name: Clean
-description: 'Removes dangling Docker images and stopped containers on the VPS.'
+description: "Removes dangling Docker images and stopped containers on the VPS."
 
 inputs:
   # SSH
@@ -17,7 +17,7 @@ inputs:
     required: true
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Clean docker inside VPS
       uses: appleboy/ssh-action@v1
@@ -25,7 +25,7 @@ runs:
         host: ${{ inputs.host }}
         username: ${{ inputs.username }}
         port: ${{ inputs.port }}
-        key: ${{ inputs.ssh-private-key }}
+        ssh-private-key: ${{ inputs.ssh-private-key }}
         script: |
           echo "Pruning dangling Docker images..."
           docker image prune -f

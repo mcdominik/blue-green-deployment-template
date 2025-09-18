@@ -16,15 +16,15 @@ inputs:
     required: true
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Pull new image on VPS
       continue-on-error: true
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ inputs.host }}
-        USERNAME: ${{ inputs.username }}
-        PORT: ${{ inputs.port }}
-        KEY: ${{ inputs.ssh-private-key }}
+        username: ${{ inputs.username }}
+        port: ${{ inputs.port }}
+        ssh-private-key: ${{ inputs.ssh-private-key }}
         script: |
           docker pull ${{ inputs.image-name }}

@@ -29,7 +29,7 @@ runs:
         host: ${{ inputs.host }}
         username: ${{ inputs.username }}
         port: ${{ inputs.port }}
-        key: ${{ inputs.ssh-private-key }}
+        ssh-private-key: ${{ inputs.ssh-private-key }}
         script: |
           set -e
 
