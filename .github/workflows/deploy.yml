@@ -10,17 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # - name: 🐛 Debug Inputs
-      #   shell: bash
-      #   run: |
-      #     echo "Host: ${{ inputs.host }}"
-      #     echo "Username: ${{ inputs.username }}"
-      #     echo "Port: ${{ inputs.port }}"
-      #     echo "Application Port: ${{ inputs.application-port }}"
-      #     echo "Container Port: ${{ inputs.container-port }}"
-      #     echo "Image Name: ${{ inputs.image-name }}"
-      #     echo "Container Name: ${{ inputs.container-name }}"
-
       - name: Checkout
         uses: actions/checkout@v4
 
